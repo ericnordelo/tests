@@ -5,9 +5,12 @@ on:
     types:
       - closed   # Trigger when a PR is closed (merged or just closed)
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   run-on-merge:
-    # Only run if the PR was merged (not just closed) and merged to main
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
 
@@ -35,7 +38,13 @@ jobs:
         run: |
           python3 ./scripts/benchmark.py --json --dir target/release > benches/contract_sizes.json
 
-      - name: Auto-commit changes
-        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 #v6.0.1
+      - name: Create Pull Request with benchmark update
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: Update contract sizes benchmark
+          commit-message: Update contract sizes benchmark
+          title: Update contract sizes benchmark
+          body: |
+            This PR updates the contract size benchmarks after a recent merge to `main`.
+          branch: update/contract-sizes-${{ github.run_id }}
+          base: main
+          token: ${{ secrets.GITHUB_TOKEN }}
