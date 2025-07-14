@@ -52,5 +52,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
+          comment-identifier: benchmark-diff
           edit-mode: replace
           body-file: comment.md
