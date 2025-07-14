@@ -94,7 +94,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     results = benchmark_contracts(args.dir)
-
     if args.json:
         print(json.dumps(results, indent=2))
     else:
