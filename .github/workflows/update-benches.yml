@@ -1,0 +1,41 @@
+name: Update contract sizes benchmark
+
+on:
+  pull_request:
+    types:
+      - closed   # Trigger when a PR is closed (merged or just closed)
+
+jobs:
+  run-on-merge:
+    # Only run if the PR was merged (not just closed) and merged to main
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Extract scarb version
+        run: |
+          SCARB_VERSION=$(grep 'scarb-version = ' Scarb.toml | sed 's/scarb-version = "\(.*\)"/\1/')
+          echo "SCARB_VERSION=$SCARB_VERSION" >> "$GITHUB_ENV"
+
+      - name: Setup scarb
+        uses: software-mansion/setup-scarb@v1
+        id: setup_scarb
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
+
+      - name: Build mocks
+        run: scarb --release build
+
+      - name: Update benchmark
+        run: |
+          python3 ./scripts/benchmark.py --json --dir target/release > benches/contract_sizes.json
+
+      - name: Auto-commit changes
+        uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 #v6.0.1
+        with:
+          commit_message: Update contract sizes benchmark
