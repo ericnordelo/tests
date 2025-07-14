@@ -88,4 +88,30 @@ pub mod UniversalDeployer {
             self.deploy_contract(classHash, salt, notFromZero, calldata)
         }
     }
+
+    #[abi(per_item)]
+    #[generate_trait]
+    impl ExternalImpl of ExternalTrait {
+        #[external(v0)]
+        fn on_erc721_received(
+            self: @ContractState,
+            operator: ContractAddress,
+            from: ContractAddress,
+            token_id: u256,
+            data: Span<felt252>,
+        ) -> felt252 {
+            1
+        }
+
+        #[external(v0)]
+        fn onERC721Received(
+            self: @ContractState,
+            operator: ContractAddress,
+            from: ContractAddress,
+            tokenId: u256,
+            data: Span<felt252>,
+        ) -> felt252 {
+            2
+        }
+    }
 }
