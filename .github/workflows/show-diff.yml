@@ -35,17 +35,22 @@ jobs:
         run: |
           python3 scripts/benchmark_diff.py scripts/benchmark.py benches/contract_sizes.json --dir target/release --markdown > diff_output.txt
 
+      - name: Prepare benchmark comment
+        run: |
+          {
+            echo "### 🧪 Cairo Contract Size Benchmark Diff"
+            echo
+            echo '```diff'
+            cat diff_output.txt
+            echo '```'
+            echo
+            echo "_This comment was generated automatically from benchmark diffs._"
+          } > comment.md
+
       - name: Post benchmark diff comment
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
-          body: |
-            ### 🧪 Cairo Contract Size Benchmark Diff
-
-            \`\`\`diff
-            $(cat diff_output.txt)
-            \`\`\`
-
-            This comment was generated automatically from benchmark diffs.
+          body-file: comment.md
