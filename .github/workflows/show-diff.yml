@@ -38,6 +38,7 @@ jobs:
       - name: Prepare benchmark comment
         run: |
           {
+            echo "<!-- benchmark-diff -->"
             echo "### 🧪 Cairo Contract Size Benchmark Diff"
             echo
             echo '```diff'
