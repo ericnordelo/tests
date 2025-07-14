@@ -1,0 +1,51 @@
+name: Benchmark Diff on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  comment-benchmark-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Extract scarb version
+        run: |
+          SCARB_VERSION=$(grep 'scarb-version = ' Scarb.toml | sed 's/scarb-version = "\(.*\)"/\1/')
+          echo "SCARB_VERSION=$SCARB_VERSION" >> "$GITHUB_ENV"
+
+      - name: Setup scarb
+        uses: software-mansion/setup-scarb@v1
+        id: setup_scarb
+        with:
+          scarb-version: ${{ env.SCARB_VERSION }}
+
+      - name: Build mocks
+        run: scarb --release build
+
+      - name: Run benchmark and capture diff
+        id: benchmark_diff
+        run: |
+          python3 scripts/benchmark_diff.py scripts/benchmark.py benches/contract_sizes.json --dir target/release --markdown > diff_output.txt
+
+      - name: Post benchmark diff comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            ### 🧪 Cairo Contract Size Benchmark Diff
+
+            \`\`\`diff
+            $(cat diff_output.txt)
+            \`\`\`
+
+            This comment was generated automatically from benchmark diffs.
