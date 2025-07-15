@@ -1,0 +1,12 @@
+{
+  "bytecode": {
+    "test_UniversalDeployer.compiled_contract_class.json": {
+      "felts": 1062
+    }
+  },
+  "contract_class": {
+    "test_UniversalDeployer.contract_class.json": {
+      "bytes": 29527
+    }
+  }
+}
