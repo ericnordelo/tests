@@ -113,27 +113,5 @@ pub mod UniversalDeployer {
         ) -> felt252 {
             2
         }
-
-        #[external(v0)]
-        fn onERC721Received2(
-            self: @ContractState,
-            operator: ContractAddress,
-            from: ContractAddress,
-            tokenId: u256,
-            data: Span<felt252>,
-        ) -> felt252 {
-            2
-        }
-
-        #[external(v0)]
-        fn onERC721Received3(
-            self: @ContractState,
-            operator: ContractAddress,
-            from: ContractAddress,
-            tokenId: u256,
-            data: Span<felt252>,
-        ) -> felt252 {
-            2
-        }
     }
 }
