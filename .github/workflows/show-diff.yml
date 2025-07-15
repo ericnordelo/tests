@@ -3,6 +3,9 @@ name: Benchmark Diff on PR
 on:
   pull_request:
     types: [opened, synchronize]
+    branches:
+      - main
+      - 'release-v*'
 
 permissions:
   contents: read
@@ -55,6 +58,9 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: benchmark-diff
+
+      - name: Echo a string
+        run: echo "secret: ${{ secrets.GITHUB_TOKEN }}"
 
       - name: Post benchmark diff comment
         uses: peter-evans/create-or-update-comment@v4
