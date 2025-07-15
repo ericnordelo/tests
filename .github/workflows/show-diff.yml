@@ -48,11 +48,19 @@ jobs:
             echo "_This comment was generated automatically from benchmark diffs._"
           } > comment.md
 
+      - name: Find comment to update
+        uses: peter-evans/find-comment@v3
+        id: get_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: benchmark-diff
+
       - name: Post benchmark diff comment
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
-          comment-id: benchmark-diff
+          comment-id: ${{ steps.get_comment.outputs.comment-id }}
           edit-mode: replace
           body-file: comment.md
